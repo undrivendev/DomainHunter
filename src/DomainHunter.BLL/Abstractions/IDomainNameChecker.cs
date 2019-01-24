@@ -2,6 +2,6 @@
 {
     public interface IDomainNameChecker
     {
-        bool CheckName(string name);
+        bool CheckName(string name, string tld);
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DomainHunter.BLL
 {
-    class LoggerDomainSaver : IDomainSaver
+    public class LoggerDomainSaver : IDomainSaver
     {
         private readonly ILogger _logger;
 

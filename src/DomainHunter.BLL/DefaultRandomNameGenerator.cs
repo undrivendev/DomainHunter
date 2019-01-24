@@ -32,13 +32,13 @@ namespace DomainHunter.BLL
 
         private char GetRandomVowel()
         {
-            string letterList = "AEIOUaeiou";
+            string letterList = "aeiou";
             return GetRandomLetter(letterList);
         }
 
         private char GetRandomConsonant()
         {
-            string letterList = "BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz";
+            string letterList = "bcdfghjklmnpqrstvwxyz";
             return GetRandomLetter(letterList);
         }
 

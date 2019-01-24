@@ -30,7 +30,7 @@ namespace DomainHunter.BLL
             while (true)
             {
                 var currentName = _randomNameGenerator.GenerateName(_parameters.Length);
-                if (_domainNameChecker.CheckName(currentName))
+                if (_domainNameChecker.CheckName(currentName, _parameters.Tld))
                 {
                     _domainSaver.SaveDomain(currentName);
                 }

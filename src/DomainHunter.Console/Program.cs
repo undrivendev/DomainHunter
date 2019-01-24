@@ -1,4 +1,5 @@
-﻿using Mds.Common.Logging;
+﻿using DomainHunter.BLL;
+using Mds.Common.Logging;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
@@ -24,9 +25,25 @@ namespace DomainHunter.Console
             try
             {
                 Mds.Common.Logging.ILogger logger = new SerilogLoggingProxy(Serilog.Log.Logger);
+                IDomainNameChecker domainNameChecker = new WhoisDomainNameChecker();
+                IDomainSaver domainSaver = new LoggerDomainSaver(logger);
+                IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
+                IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
 
+                var parameters = new DomainHunterParameters()
+                {
+                    Length = int.Parse(configuration["DomainLength"]),
+                    SleepMs = int.Parse(configuration["DomainSleepMs"]),
+                    Tld = configuration["DomainTld"]
+                };
+                var service = new DomainHunterService(
+                    domainNameChecker, 
+                    randomNameGenerator, 
+                    domainSaver, 
+                    parameters);
 
-                 
+                service.HuntName();
+
                 return 0;
             }
             catch (Exception ex)

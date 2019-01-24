@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DomainHunter.BLL
 {
-    class DefaultRandomNumberGenerator : IRandomNumberGenerator
+    public class DefaultRandomNumberGenerator : IRandomNumberGenerator
     {
         public int GenerateRandomNumber(int maxNumber)
         {
-            throw new NotImplementedException();
+            byte[] randomBytes = new byte[1];
+            var rngProvider = new RNGCryptoServiceProvider();
+            rngProvider.GetBytes(randomBytes);
+            return randomBytes[0] % maxNumber;
         }
     }
 }
