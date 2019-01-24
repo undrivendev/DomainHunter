@@ -16,7 +16,7 @@ namespace DomainHunter.BLL
         public string GenerateName(int length)
         {
             var sb = new StringBuilder(GetRandomConsonant());
-            for (int i = 1; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (i % 2 == 0)
                 {

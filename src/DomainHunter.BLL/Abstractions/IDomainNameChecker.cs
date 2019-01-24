@@ -1,7 +1,9 @@
-﻿namespace DomainHunter.BLL
+﻿using System.Threading.Tasks;
+
+namespace DomainHunter.BLL
 {
     public interface IDomainNameChecker
     {
-        bool CheckName(string name, string tld);
+        Task<bool> CheckName(string name, string tld);
     }
 }

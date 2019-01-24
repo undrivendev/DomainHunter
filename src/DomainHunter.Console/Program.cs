@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace DomainHunter.Console
 {
@@ -37,12 +38,13 @@ namespace DomainHunter.Console
                     Tld = configuration["DomainTld"]
                 };
                 var service = new DomainHunterService(
-                    domainNameChecker, 
-                    randomNameGenerator, 
-                    domainSaver, 
+                    domainNameChecker,
+                    randomNameGenerator,
+                    domainSaver,
                     parameters);
 
-                service.HuntName();
+                logger.Log("Starting the hunt...");
+                service.HuntName().Wait();
 
                 return 0;
             }

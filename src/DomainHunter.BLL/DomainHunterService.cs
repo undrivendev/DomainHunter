@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace DomainHunter.BLL
 {
@@ -25,18 +23,18 @@ namespace DomainHunter.BLL
             _parameters = parameters;
         }
 
-        public void HuntName()
+        public async Task HuntName()
         {
             while (true)
             {
                 var currentName = _randomNameGenerator.GenerateName(_parameters.Length);
-                if (_domainNameChecker.CheckName(currentName, _parameters.Tld))
+                if (await _domainNameChecker.CheckName(currentName, _parameters.Tld))
                 {
                     _domainSaver.SaveDomain(currentName);
                 }
                 Thread.Sleep(_parameters.SleepMs);
             }
         }
-        
+
     }
 }
