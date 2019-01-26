@@ -53,7 +53,7 @@ namespace DomainHunter.Console
                 };
                 IDomainChecker domainNameChecker = new WhoisDomainChecker(logger);
                 IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
-                IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
+                IRandomNameGenerator randomNameGenerator = new RandomNameGenerator(randomNumberGenerator);
 
               
                 var service = new DomainHunterService(
