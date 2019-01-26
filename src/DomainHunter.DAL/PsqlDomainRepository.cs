@@ -31,11 +31,11 @@ namespace DomainHunter.DAL
             }
         }
 
-        public async Task Insert(Domain domain)
+        public async Task<int> Insert(Domain domain)
         {
             using (var conn = new NpgsqlConnection(_psqlParameters.ConnectionString))
             {
-                await conn.InsertAsync(_mapper.Map<Domain, PsqlDomainDto>(domain));
+                return await conn.InsertAsync(_mapper.Map<Domain, PsqlDomainDto>(domain));
             }
         }
 

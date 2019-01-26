@@ -5,6 +5,7 @@ using Mds.Common.Logging;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace DomainHunter.Console
 
                 //REPOSITORY
                 PsqlParameters psqlParameters = new PsqlParameters(configuration.GetConnectionString("Main"));
-                IDomainRepository domainRepository = new PsqlDomainRepository(psqlParameters, mapper);
+                IDomainRepository domainRepository = new CachedDomainRepository(new PsqlDomainRepository(psqlParameters, mapper));
 
                 //APP SERVICES
                 var huntParameters = new DomainHunterParameters()
@@ -53,9 +54,8 @@ namespace DomainHunter.Console
                 };
                 IDomainChecker domainNameChecker = new WhoisDomainChecker(logger);
                 IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
-                IRandomNameGenerator randomNameGenerator = new RandomNameGenerator(randomNumberGenerator);
-
-              
+                IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
+                              
                 var service = new DomainHunterService(
                     logger,
                     domainNameChecker,
@@ -63,11 +63,11 @@ namespace DomainHunter.Console
                     domainRepository,
                     huntParameters);
 
+
                 logger.Log("Starting the hunt...");
-                while (true)
-                {
-                    service.HuntName().Wait();
-                }
+
+                var concurrentTaskNumber = int.Parse(configuration["ConcurrentTaskNumber"]);
+                StartJobConcurrently(concurrentTaskNumber, service).Wait();
 
 #pragma warning disable CS0162 // Unreachable code detected
                 return 0;
@@ -81,6 +81,21 @@ namespace DomainHunter.Console
             finally
             {
                 Log.CloseAndFlush();
+            }
+        }
+
+        private static async Task StartJobConcurrently(int concurrentTaskNumber, DomainHunterService service)
+        {
+            var currentTasks = new List<Task>();
+            for (int i = 0; i < concurrentTaskNumber; i++)
+            {
+                currentTasks.Add(service.HuntName());
+            }
+            while (currentTasks.Count > 0)
+            {
+                var task = await Task.WhenAny(currentTasks);
+                currentTasks.Remove(task);
+                currentTasks.Add(service.HuntName());
             }
         }
     }

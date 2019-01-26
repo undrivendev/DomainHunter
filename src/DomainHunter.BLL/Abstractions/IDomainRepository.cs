@@ -9,6 +9,6 @@ namespace DomainHunter.BLL
     {
         Task<IEnumerable<Domain>> GetAll();
         Task<bool> IsChecked(Domain domain);
-        Task Insert(Domain domain);
+        Task<int> Insert(Domain domain);
     }
 }

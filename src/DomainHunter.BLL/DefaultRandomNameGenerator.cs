@@ -4,11 +4,14 @@ using System.Text;
 
 namespace DomainHunter.BLL
 {
-    public class RandomNameGenerator : IRandomNameGenerator
+    /// <summary>
+    /// true randomness, no words, not anything
+    /// </summary>
+    public class DefaultRandomNameGenerator : IRandomNameGenerator
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
 
-        public RandomNameGenerator(IRandomNumberGenerator randomNumberGenerator)
+        public DefaultRandomNameGenerator(IRandomNumberGenerator randomNumberGenerator)
         {
             _randomNumberGenerator = randomNumberGenerator;
         }

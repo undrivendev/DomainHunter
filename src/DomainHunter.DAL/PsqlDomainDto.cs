@@ -12,6 +12,6 @@ namespace DomainHunter.DAL
         public string tld { get; set; }
         public byte status { get; set; }
         public DateTime? expiration { get; set; }
-        public DateTime? timestamp { get; set; }
+        public DateTime? @checked { get; set; }
     }
 }

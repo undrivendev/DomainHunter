@@ -14,8 +14,8 @@ CREATE TABLE public.domain (
 	name VARCHAR(100) NOT NULL,
 	tld VARCHAR(10) NOT NULL,
 	status smallint NOT NULL,
-	expiration date,
-	"timestamp" timestamp,
+	expiration timestamp,
+	checked timestamp,
 	UNIQUE(name, tld)
 )
 WITH (

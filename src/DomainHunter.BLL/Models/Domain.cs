@@ -10,7 +10,7 @@ namespace DomainHunter.BLL
         public string Tld { get; set; }
         public DomainStatus Status { get; set; }
         public DateTime? Expiration { get; set; }
-        public DateTime? Timestamp { get; set; }
+        public DateTime? Checked { get; set; }
         
         public override string ToString()
             => $"{Name}.{Tld}";
