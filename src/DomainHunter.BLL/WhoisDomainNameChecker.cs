@@ -1,32 +1,29 @@
-﻿using Mds.Common.Base;
+﻿using DomainHunter.BLL.Whois;
+using Mds.Common.Base;
 using Mds.Common.Logging;
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Whois;
-using Whois.Models;
 
 namespace DomainHunter.BLL
 {
     public class WhoisDomainChecker : IDomainChecker
     {
         private readonly ILogger _logger;
+        private readonly IWhoisService _whoisService;
 
-        public WhoisDomainChecker(ILogger logger)
+        public WhoisDomainChecker(ILogger logger, IWhoisService whoisService)
         {
             _logger = logger;
+            _whoisService = whoisService;
         }
 
         public async Task<(DomainStatus, DateTime?)> GetStatusAndExpirationDate(Domain domain)
         {
-            var whois = new WhoisLookup();
-            WhoisResponse whoisResponse = null;
+            var whoisResponse = "";
             try
             {
-                whoisResponse = (await whois.LookupAsync(domain.ToString()));
-                if (!IsTaken(whoisResponse) && whoisResponse.ParsedResponse == null)
-                {
-                    throw new Exception("parsed response is null");
-                }
+                whoisResponse = await _whoisService.GetWhoisResponseForDomain(domain);
             }
 #pragma warning disable CS0168 // Variable is declared but never used
             catch (Exception ex)
@@ -38,18 +35,22 @@ namespace DomainHunter.BLL
             return ExtractDataFromWhoisResponse(whoisResponse);
         }
 
-        private (DomainStatus, DateTime?) ExtractDataFromWhoisResponse(WhoisResponse whoisResponse)
+        private (DomainStatus, DateTime?) ExtractDataFromWhoisResponse(string whoisResponse)
         {
             DateTime? expirationDate = null;
             var status = IsTaken(whoisResponse) ? DomainStatus.Free : DomainStatus.Taken;
             if (status == DomainStatus.Taken)
             {
-                expirationDate = whoisResponse.ParsedResponse.Expiration;
+                expirationDate = ParseExpirationDate(whoisResponse);
             }
             return (status, expirationDate);
         }
 
-        private bool IsTaken(WhoisResponse whoisResponse) => !String.IsNullOrWhiteSpace(whoisResponse.Content) && whoisResponse.Content.Substring(0, 12).ToLowerInvariant() == "no match for";
-        
+        private bool IsTaken(string whoisResponse) => !String.IsNullOrWhiteSpace(whoisResponse) && whoisResponse.Substring(0, 12).ToLowerInvariant() == "no match for";
+        private DateTime? ParseExpirationDate(string whoisResponse)
+        {
+            return DateTime.Parse(Regex.Match(whoisResponse, @"(?<=Registrar Registration Expiration Date: ).+\r").Value.Trim());
+        }
+
     }
 }

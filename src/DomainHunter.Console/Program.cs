@@ -1,4 +1,5 @@
 ﻿using DomainHunter.BLL;
+using DomainHunter.BLL.Whois;
 using DomainHunter.DAL;
 using Mds.Common.Base;
 using Mds.Common.Logging;
@@ -52,7 +53,8 @@ namespace DomainHunter.Console
                     SleepMs = int.Parse(configuration["DomainSleepMs"]),
                     Tld = configuration["DomainTld"]
                 };
-                IDomainChecker domainNameChecker = new WhoisDomainChecker(logger);
+                IWhoisService whoisService = new DefaultWhoisService();
+                IDomainChecker domainNameChecker = new WhoisDomainChecker(logger, whoisService);
                 IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
                 IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
                               
