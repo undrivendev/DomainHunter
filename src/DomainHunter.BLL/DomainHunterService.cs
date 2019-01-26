@@ -1,25 +1,26 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DomainHunter.BLL
 {
     public class DomainHunterService
     {
-        private readonly IDomainNameChecker _domainNameChecker;
+        private readonly IDomainChecker _domainChecker;
         private readonly IRandomNameGenerator _randomNameGenerator;
-        private readonly IDomainSaver _domainSaver;
+        private readonly IDomainRepository _domainRepository;
         private readonly DomainHunterParameters _parameters;
 
         public DomainHunterService(
-            IDomainNameChecker domainNameChecker,
+            IDomainChecker domainChecker,
             IRandomNameGenerator randomNameGenerator,
-            IDomainSaver domainSaver,
+            IDomainRepository domainRepository,
             DomainHunterParameters parameters
             )
         {
-            _domainNameChecker = domainNameChecker;
+            _domainChecker = domainChecker;
             _randomNameGenerator = randomNameGenerator;
-            _domainSaver = domainSaver;
+            _domainRepository = domainRepository;
             _parameters = parameters;
         }
 
@@ -28,10 +29,26 @@ namespace DomainHunter.BLL
             while (true)
             {
                 var currentName = _randomNameGenerator.GenerateName(_parameters.Length);
-                if (await _domainNameChecker.CheckName(currentName, _parameters.Tld))
+                var currentDomain = new Domain() { Name = currentName, Timestamp = DateTime.UtcNow };
+
+                var result = await _domainChecker.CheckName(currentName, _parameters.Tld);
+                if (result.Success)
                 {
-                    _domainSaver.SaveDomain(currentName);
+                    if (result.Data)
+                    {
+                        currentDomain.Status = DomainStatus.Free;
+                    }
+                    else
+                    {
+                        currentDomain.Status = DomainStatus.Taken;
+                    }
                 }
+                else
+                {
+                    currentDomain.Status = DomainStatus.Error;
+                }
+                await _domainRepository.Insert(currentDomain);
+
                 Thread.Sleep(_parameters.SleepMs);
             }
         }

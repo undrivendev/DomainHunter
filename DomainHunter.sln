@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainHunter.Console", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainHunter.BLL", "src\DomainHunter.BLL\DomainHunter.BLL.csproj", "{AA76EA91-E78D-4B6D-8AE4-C99317E13FFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainHunter.DAL", "src\DomainHunter.DAL\DomainHunter.DAL.csproj", "{2A82FD0F-DAD7-49DB-91D5-C7548C9AD2B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AA76EA91-E78D-4B6D-8AE4-C99317E13FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA76EA91-E78D-4B6D-8AE4-C99317E13FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA76EA91-E78D-4B6D-8AE4-C99317E13FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A82FD0F-DAD7-49DB-91D5-C7548C9AD2B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A82FD0F-DAD7-49DB-91D5-C7548C9AD2B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A82FD0F-DAD7-49DB-91D5-C7548C9AD2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A82FD0F-DAD7-49DB-91D5-C7548C9AD2B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

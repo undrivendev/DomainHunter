@@ -18,7 +18,8 @@ namespace DomainHunter.BLL
             var sb = new StringBuilder(GetRandomConsonant());
             for (int i = 0; i < length; i++)
             {
-                if (i % 2 == 0)
+                var charTypeSelector = _randomNumberGenerator.GenerateRandomNumber(1);
+                if (charTypeSelector == 0)
                 {
                     sb.Append(GetRandomVowel());
                 }

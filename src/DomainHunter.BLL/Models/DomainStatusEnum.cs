@@ -4,8 +4,10 @@ using System.Text;
 
 namespace DomainHunter.BLL
 {
-    public interface IDomainSaver
+    public enum DomainStatus
     {
-        void SaveDomain(string name);
+        Free = 0,
+        Taken = 1,
+        Error = 2
     }
 }

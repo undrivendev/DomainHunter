@@ -1,4 +1,6 @@
 ﻿using DomainHunter.BLL;
+using DomainHunter.DAL;
+using Mds.Common.Base;
 using Mds.Common.Logging;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -25,23 +27,40 @@ namespace DomainHunter.Console
 
             try
             {
-                Mds.Common.Logging.ILogger logger = new SerilogLoggingProxy(Serilog.Log.Logger);
-                IDomainNameChecker domainNameChecker = new WhoisDomainNameChecker();
-                IDomainSaver domainSaver = new LoggerDomainSaver(logger);
-                IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
-                IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
+                //COMMON
+                Mds.Common.Logging.ILogger logger = new SerilogLoggingProxy(Log.Logger);
 
-                var parameters = new DomainHunterParameters()
+                //AUTOMAPPER
+                //automapper
+                AutoMapper.Mapper.Initialize(cfg =>
+                {
+                    cfg.CreateMissingTypeMaps = false;
+                    AutoMapperConfiguration.Add(cfg);
+                });
+                AutoMapper.Mapper.Configuration.AssertConfigurationIsValid();
+                IMapper mapper = new AutomapperWrapper(AutoMapper.Mapper.Instance);
+
+                //REPOSITORY
+                PsqlParameters psqlParameters = new PsqlParameters(configuration.GetConnectionString("Main"));
+                IDomainRepository domainRepository = new PsqlDomainRepository(psqlParameters, mapper);
+
+                //APP SERVICES
+                var huntParameters = new DomainHunterParameters()
                 {
                     Length = int.Parse(configuration["DomainLength"]),
                     SleepMs = int.Parse(configuration["DomainSleepMs"]),
                     Tld = configuration["DomainTld"]
                 };
+                IDomainChecker domainNameChecker = new WhoisDomainNameChecker(logger);
+                IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
+                IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
+
+              
                 var service = new DomainHunterService(
                     domainNameChecker,
                     randomNameGenerator,
-                    domainSaver,
-                    parameters);
+                    domainRepository,
+                    huntParameters);
 
                 logger.Log("Starting the hunt...");
                 service.HuntName().Wait();
