@@ -43,7 +43,7 @@ namespace DomainHunter.DAL
         {
             using (var conn = new NpgsqlConnection(_psqlParameters.ConnectionString))
             {
-                return await conn.ExecuteScalarAsync<bool>("select exists(select 1 from domain where name = @name)", new { name = domain.Name });
+                return await conn.ExecuteScalarAsync<bool>("select exists(select 1 from domain where name = @name and tld = @tld)", new { name = domain.Name, tld = domain.Tld });
             }
         }
     }

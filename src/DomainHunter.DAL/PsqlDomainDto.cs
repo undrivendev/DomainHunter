@@ -9,6 +9,7 @@ namespace DomainHunter.DAL
     public class PsqlDomainDto : BasePsqlDto
     {
         public string name { get; set; }
+        public string tld { get; set; }
         public byte status { get; set; }
         public DateTime? expiration { get; set; }
         public DateTime? timestamp { get; set; }

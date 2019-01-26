@@ -12,7 +12,7 @@ namespace DomainHunter.BLL
             byte[] randomBytes = new byte[1];
             var rngProvider = new RNGCryptoServiceProvider();
             rngProvider.GetBytes(randomBytes);
-            return randomBytes[0] % maxNumber;
+            return randomBytes[0] % (maxNumber + 1);
         }
     }
 }

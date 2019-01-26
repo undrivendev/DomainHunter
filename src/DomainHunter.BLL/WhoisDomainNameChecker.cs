@@ -22,8 +22,8 @@ namespace DomainHunter.BLL
             WhoisResponse whoisResponse = null;
             try
             {
-                whoisResponse = (await whois.LookupAsync(domain.Name));
-                if (whoisResponse.ParsedResponse == null)
+                whoisResponse = (await whois.LookupAsync(domain.ToString()));
+                if (!IsTaken(whoisResponse) && whoisResponse.ParsedResponse == null)
                 {
                     throw new Exception("parsed response is null");
                 }
@@ -41,12 +41,15 @@ namespace DomainHunter.BLL
         private (DomainStatus, DateTime?) ExtractDataFromWhoisResponse(WhoisResponse whoisResponse)
         {
             DateTime? expirationDate = null;
-            var status = !String.IsNullOrWhiteSpace(whoisResponse.Content) && whoisResponse.Content.Substring(0, 12).ToLowerInvariant() == "no match for" ? DomainStatus.Free : DomainStatus.Taken;
+            var status = IsTaken(whoisResponse) ? DomainStatus.Free : DomainStatus.Taken;
             if (status == DomainStatus.Taken)
             {
                 expirationDate = whoisResponse.ParsedResponse.Expiration;
             }
             return (status, expirationDate);
         }
+
+        private bool IsTaken(WhoisResponse whoisResponse) => !String.IsNullOrWhiteSpace(whoisResponse.Content) && whoisResponse.Content.Substring(0, 12).ToLowerInvariant() == "no match for";
+        
     }
 }

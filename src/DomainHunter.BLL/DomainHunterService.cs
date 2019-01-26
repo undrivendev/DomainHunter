@@ -29,9 +29,8 @@ namespace DomainHunter.BLL
 
         public async Task HuntName()
         {
-            var currentBaseName = _randomNameGenerator.GenerateName(_parameters.Length);
-            var finalName = $"{currentBaseName}.{_parameters.Tld}";
-            var currentDomain = new Domain() { Name = finalName };
+            var generatedName = _randomNameGenerator.GenerateName(_parameters.Length);
+            var currentDomain = new Domain() { Name = generatedName, Tld = _parameters.Tld };
             if (!(await _domainRepository.IsChecked(currentDomain)))
             {
                 var domainData = await _domainChecker.GetStatusAndExpirationDate(currentDomain);
@@ -40,7 +39,7 @@ namespace DomainHunter.BLL
 
                 if (currentDomain.Status == DomainStatus.Free)
                 {
-                    _logger.Log($"found free domain {currentBaseName}.{_parameters.Tld}");
+                    _logger.Log($"found free domain {currentDomain}");
                 }
                 currentDomain.Timestamp = DateTime.UtcNow;
                 await _domainRepository.Insert(currentDomain);
