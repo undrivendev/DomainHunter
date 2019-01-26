@@ -51,7 +51,7 @@ namespace DomainHunter.Console
                     SleepMs = int.Parse(configuration["DomainSleepMs"]),
                     Tld = configuration["DomainTld"]
                 };
-                IDomainChecker domainNameChecker = new WhoisDomainNameChecker(logger);
+                IDomainChecker domainNameChecker = new WhoisDomainChecker(logger);
                 IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
                 IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
 
@@ -69,7 +69,9 @@ namespace DomainHunter.Console
                     service.HuntName().Wait();
                 }
 
+#pragma warning disable CS0162 // Unreachable code detected
                 return 0;
+#pragma warning restore CS0162 // Unreachable code detected
             }
             catch (Exception ex)
             {

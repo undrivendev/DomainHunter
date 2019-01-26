@@ -13,6 +13,7 @@ CREATE TABLE public.domain (
     id SERIAL NOT NULL PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	status smallint NOT NULL,
+	expiration date,
 	"timestamp" timestamp
 )
 WITH (

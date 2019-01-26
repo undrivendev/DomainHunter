@@ -1,10 +1,11 @@
 ﻿using Mds.Common.Base;
+using System;
 using System.Threading.Tasks;
 
 namespace DomainHunter.BLL
 {
     public interface IDomainChecker
     {
-        Task<DomainStatus> GetStatus(Domain domain);
+        Task<(DomainStatus, DateTime?)> GetStatusAndExpirationDate(Domain domain);
     }
 }

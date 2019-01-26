@@ -3,33 +3,50 @@ using Mds.Common.Logging;
 using System;
 using System.Threading.Tasks;
 using Whois;
+using Whois.Models;
 
 namespace DomainHunter.BLL
 {
-    public class WhoisDomainNameChecker : IDomainChecker
+    public class WhoisDomainChecker : IDomainChecker
     {
         private readonly ILogger _logger;
 
-        public WhoisDomainNameChecker(ILogger logger)
+        public WhoisDomainChecker(ILogger logger)
         {
             _logger = logger;
         }
 
-        public async Task<DomainStatus> GetStatus(Domain domain)
+        public async Task<(DomainStatus, DateTime?)> GetStatusAndExpirationDate(Domain domain)
         {
             var whois = new WhoisLookup();
-            string response = null;
+            WhoisResponse whoisResponse = null;
             try
             {
-                response = (await whois.LookupAsync(domain.Name)).Content;
+                whoisResponse = (await whois.LookupAsync(domain.Name));
+                if (whoisResponse.ParsedResponse == null)
+                {
+                    throw new Exception("parsed response is null");
+                }
             }
-            catch (Exception)
+#pragma warning disable CS0168 // Variable is declared but never used
+            catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
                 _logger.Log(new LogEntry(LoggingEventType.Warning, $"error while checking domain {domain}"));
-                return DomainStatus.Error;
+                return (DomainStatus.Error, null);
             }
+            return ExtractDataFromWhoisResponse(whoisResponse);
+        }
 
-            return !String.IsNullOrWhiteSpace(response) && response.Substring(0, 12).ToLowerInvariant() == "no match for" ? DomainStatus.Free : DomainStatus.Taken;
+        private (DomainStatus, DateTime?) ExtractDataFromWhoisResponse(WhoisResponse whoisResponse)
+        {
+            DateTime? expirationDate = null;
+            var status = !String.IsNullOrWhiteSpace(whoisResponse.Content) && whoisResponse.Content.Substring(0, 12).ToLowerInvariant() == "no match for" ? DomainStatus.Free : DomainStatus.Taken;
+            if (status == DomainStatus.Taken)
+            {
+                expirationDate = whoisResponse.ParsedResponse.Expiration;
+            }
+            return (status, expirationDate);
         }
     }
 }

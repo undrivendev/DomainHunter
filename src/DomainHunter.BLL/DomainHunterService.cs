@@ -7,21 +7,21 @@ namespace DomainHunter.BLL
     public class DomainHunterService
     {
         private readonly ILogger _logger;
-        private readonly IDomainChecker _domainStatusChecker;
+        private readonly IDomainChecker _domainChecker;
         private readonly IRandomNameGenerator _randomNameGenerator;
         private readonly IDomainRepository _domainRepository;
         private readonly DomainHunterParameters _parameters;
 
         public DomainHunterService(
             ILogger logger,
-            IDomainChecker domainStatusChecker,
+            IDomainChecker domainChecker,
             IRandomNameGenerator randomNameGenerator,
             IDomainRepository domainRepository,
             DomainHunterParameters parameters
             )
         {
             _logger = logger;
-            _domainStatusChecker = domainStatusChecker;
+            _domainChecker = domainChecker;
             _randomNameGenerator = randomNameGenerator;
             _domainRepository = domainRepository;
             _parameters = parameters;
@@ -34,7 +34,10 @@ namespace DomainHunter.BLL
             var currentDomain = new Domain() { Name = finalName };
             if (!(await _domainRepository.IsChecked(currentDomain)))
             {
-                currentDomain.Status = await _domainStatusChecker.GetStatus(currentDomain);
+                var domainData = await _domainChecker.GetStatusAndExpirationDate(currentDomain);
+                currentDomain.Status = domainData.Item1;
+                currentDomain.Expiration = domainData.Item2;
+
                 if (currentDomain.Status == DomainStatus.Free)
                 {
                     _logger.Log($"found free domain {currentBaseName}.{_parameters.Tld}");
