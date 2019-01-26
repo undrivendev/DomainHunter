@@ -41,7 +41,7 @@ namespace DomainHunter.BLL
                 {
                     _logger.Log($"found free domain {currentDomain}");
                 }
-                currentDomain.Timestamp = DateTime.UtcNow;
+                currentDomain.Checked = DateTime.UtcNow;
                 await _domainRepository.Insert(currentDomain);
             }
         }
