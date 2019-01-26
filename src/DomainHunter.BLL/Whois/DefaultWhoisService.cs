@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using Mds.Common.Base;
+using Mds.Common.Logging;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,55 +13,89 @@ namespace DomainHunter.BLL.Whois
 {
     public class DefaultWhoisService : IWhoisService
     {
+        private readonly ILogger _logger;
+        private readonly IServerSelector _serverSelector;
 
+        public DefaultWhoisService(ILogger logger, IServerSelector serverSelector)
+        {
+            _logger = logger;
+            _serverSelector = serverSelector;
+        }
 
         /// <summary>
         /// https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.tcpclient?view=netstandard-2.0
         /// </summary>
         /// <param name="domain"></param>
         /// <returns></returns>
-        public async Task<string> GetWhoisResponseForDomain(Domain domain)
+        public async Task<Result<string>> GetWhoisResponseForDomain(Domain domain)
         {
-            var initialServer = "whois.verisign-grs.com";
+            var initialServer = _serverSelector.GetServer();
 
             var result = await GetResponseFromServer(initialServer, domain);
-            var finalServer = ParseForServerName(result);
-
-            if (finalServer.ToLowerInvariant() != initialServer.ToLowerInvariant())
+            if (result.Success)
             {
-                result = await GetResponseFromServer(finalServer, domain);
+                var finalServer = ParseForServerName(result.Data);
+                if (finalServer.ToLowerInvariant() != initialServer.ToLowerInvariant())
+                {
+                    result = await GetResponseFromServer(finalServer, domain);
+                    if (result.Success)
+                    {
+                        return result;
+                    }
+                }
             }
-
-            return result;
+            return Result.FailedResult<string>(result.Errors.ToArray());
         }
 
         private string ParseForServerName(string whoisString)
             => Regex.Match(whoisString, @"(?<=Registrar WHOIS Server: ).+\r").Value.Trim();
         
 
-        private async Task<string> GetResponseFromServer(string server, Domain domain)
+        private async Task<Result<string>> GetResponseFromServer(string server, Domain domain)
         {
-            var result = "";
-            TcpClient client = new TcpClient(server, 43);
-            using (var netStream = client.GetStream())
+            var resultString = "";
+
+            try
             {
-                //request
-                var requestData = System.Text.Encoding.ASCII.GetBytes($"{domain}\r\n");
-                await netStream.WriteAsync(requestData, 0, requestData.Length);
-
-                byte[] responseData = new byte[1024];
-                using (MemoryStream memStream = new MemoryStream())
+                TcpClient client = new TcpClient(server, 43);
+                using (var netStream = client.GetStream())
                 {
+                    //request
+                    var requestData = System.Text.Encoding.ASCII.GetBytes($"{domain}\r\n");
+                    await netStream.WriteAsync(requestData, 0, requestData.Length);
 
-                    int numBytesRead;
-                    while ((numBytesRead = netStream.Read(responseData, 0, responseData.Length)) > 0)
+                    byte[] responseData = new byte[1024];
+                    using (MemoryStream memStream = new MemoryStream())
                     {
-                        memStream.Write(responseData, 0, numBytesRead);
+
+                        int numBytesRead;
+                        while ((numBytesRead = netStream.Read(responseData, 0, responseData.Length)) > 0)
+                        {
+                            memStream.Write(responseData, 0, numBytesRead);
+                        }
+                        resultString = Encoding.ASCII.GetString(memStream.ToArray(), 0, (int)memStream.Length);
                     }
-                    result = Encoding.ASCII.GetString(memStream.ToArray(), 0, (int)memStream.Length);
                 }
             }
-            return result;
+            catch (Exception ex)
+            {
+                var errorMessage = $"failed to get domain information from whois server. parameters: server={server}, domain={JsonConvert.SerializeObject(domain)}";
+                _logger.Log(new LogEntry(LoggingEventType.Error, errorMessage));
+                _logger.Log(ex);
+                return Result.FailedResult<string>(new Error(ErrorCode.GENERIC_ERROR, ErrorLevel.Error, errorMessage));
+            }
+
+            if (IsValidResponse(resultString))
+            {
+                return Result.SuccessResult(resultString);
+            }
+            else
+            {
+                return Result.FailedResult<string>(new Error(ErrorCode.GENERIC_ERROR, ErrorLevel.Error, resultString));
+            }           
         }
+
+        private bool IsValidResponse(string whoisResponse)
+            => whoisResponse.Contains("Registrar WHOIS Server: ");
     }
 }

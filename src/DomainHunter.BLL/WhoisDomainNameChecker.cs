@@ -20,19 +20,13 @@ namespace DomainHunter.BLL
 
         public async Task<(DomainStatus, DateTime?)> GetStatusAndExpirationDate(Domain domain)
         {
-            var whoisResponse = "";
-            try
+            var whoisResult = await _whoisService.GetWhoisResponseForDomain(domain);
+            if (whoisResult.Success)
             {
-                whoisResponse = await _whoisService.GetWhoisResponseForDomain(domain);
+                return ExtractDataFromWhoisResponse(whoisResult.Data);
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-                _logger.Log(new LogEntry(LoggingEventType.Warning, $"error while checking domain {domain}"));
-                return (DomainStatus.Error, null);
-            }
-            return ExtractDataFromWhoisResponse(whoisResponse);
+
+            return (DomainStatus.Error, null);
         }
 
         private (DomainStatus, DateTime?) ExtractDataFromWhoisResponse(string whoisResponse)

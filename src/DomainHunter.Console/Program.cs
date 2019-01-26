@@ -53,9 +53,23 @@ namespace DomainHunter.Console
                     SleepMs = int.Parse(configuration["DomainSleepMs"]),
                     Tld = configuration["DomainTld"]
                 };
-                IWhoisService whoisService = new DefaultWhoisService();
-                IDomainChecker domainNameChecker = new WhoisDomainChecker(logger, whoisService);
+
+                ServerSelectorOptions selectorOptions = new ServerSelectorOptions()
+                {
+                    Servers = new string[] 
+                    {
+                        "whois.verisign-grs.com"
+                    }
+                };
+
                 IRandomNumberGenerator randomNumberGenerator = new DefaultRandomNumberGenerator();
+                IServerSelector serverSelector = new RandomServerSelector(
+                    selectorOptions,
+                    randomNumberGenerator
+                    );
+                IWhoisService whoisService = new DefaultWhoisService(logger, serverSelector);
+                IDomainChecker domainNameChecker = new WhoisDomainChecker(logger, whoisService);
+               
                 IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
                               
                 var service = new DomainHunterService(
