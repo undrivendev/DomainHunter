@@ -8,6 +8,7 @@ namespace DomainHunter.BLL
     {
         Free = 0,
         Taken = 1,
-        Error = 2
+        Error = 2,
+        FalsePositive = 3
     }
 }
