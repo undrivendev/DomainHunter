@@ -5,6 +5,6 @@ namespace DomainHunter.BLL
 {
     public interface IDomainChecker
     {
-        Task<Result<bool>> CheckName(string name, string tld);
+        Task<DomainStatus> GetStatus(Domain domain);
     }
 }

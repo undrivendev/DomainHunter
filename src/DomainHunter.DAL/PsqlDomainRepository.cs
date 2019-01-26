@@ -31,19 +31,19 @@ namespace DomainHunter.DAL
             }
         }
 
-        public Task Insert(Domain domain)
+        public async Task Insert(Domain domain)
         {
             using (var conn = new NpgsqlConnection(_psqlParameters.ConnectionString))
             {
-                return conn.InsertAsync(_mapper.Map<Domain, PsqlDomainDto>(domain));
+                await conn.InsertAsync(_mapper.Map<Domain, PsqlDomainDto>(domain));
             }
         }
 
-        public Task<bool> IsChecked(Domain domain)
+        public async Task<bool> IsChecked(Domain domain)
         {
             using (var conn = new NpgsqlConnection(_psqlParameters.ConnectionString))
             {
-                return conn.ExecuteScalarAsync<bool>("select exists(select 1 from domain where name = @name)", new { name = domain.Name });
+                return await conn.ExecuteScalarAsync<bool>("select exists(select 1 from domain where name = @name)", new { name = domain.Name });
             }
         }
     }

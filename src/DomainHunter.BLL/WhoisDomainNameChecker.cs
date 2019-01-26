@@ -15,21 +15,21 @@ namespace DomainHunter.BLL
             _logger = logger;
         }
 
-        public async Task<Result<bool>> CheckName(string name, string tld)
+        public async Task<DomainStatus> GetStatus(Domain domain)
         {
-            var finalName = $"{name}.{tld}";
             var whois = new WhoisLookup();
             string response = null;
             try
             {
-                response = (await whois.LookupAsync(finalName)).Content;
+                response = (await whois.LookupAsync(domain.Name)).Content;
             }
             catch (Exception)
             {
-                return Result.FailedResult<bool>(new Error(ErrorCode.GENERIC_ERROR, ErrorLevel.Error, "error while checking the domain"));
+                _logger.Log(new LogEntry(LoggingEventType.Warning, $"error while checking domain {domain}"));
+                return DomainStatus.Error;
             }
-           
-            return Result.SuccessResult(!String.IsNullOrWhiteSpace(response) && response.Substring(0, 12).ToLowerInvariant() == "no match for");
+
+            return !String.IsNullOrWhiteSpace(response) && response.Substring(0, 12).ToLowerInvariant() == "no match for" ? DomainStatus.Free : DomainStatus.Taken;
         }
     }
 }

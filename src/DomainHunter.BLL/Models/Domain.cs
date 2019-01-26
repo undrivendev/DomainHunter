@@ -8,6 +8,9 @@ namespace DomainHunter.BLL
     {
         public string Name { get; set; }
         public DomainStatus Status { get; set; }
-        public DateTime? Timestamp { get; set; }        
+        public DateTime? Timestamp { get; set; }
+
+        public override string ToString()
+            => Name;
     }
 }

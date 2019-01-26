@@ -12,9 +12,11 @@ namespace DomainHunter.Console
         public static void Add(IMapperConfigurationExpression cfg)
         {
             // -###- repository
-            cfg.CreateMap<Domain, PsqlDomainDto>();
+            cfg.CreateMap<Domain, PsqlDomainDto>()
+                .ForMember(dest => dest.status, opt => opt.MapFrom(src => (byte)src.Status));
             //reverse
-            cfg.CreateMap<PsqlDomainDto, Domain>();
+            cfg.CreateMap<PsqlDomainDto, Domain>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (DomainStatus)src.status));
         }
     }
 }

@@ -57,13 +57,17 @@ namespace DomainHunter.Console
 
               
                 var service = new DomainHunterService(
+                    logger,
                     domainNameChecker,
                     randomNameGenerator,
                     domainRepository,
                     huntParameters);
 
                 logger.Log("Starting the hunt...");
-                service.HuntName().Wait();
+                while (true)
+                {
+                    service.HuntName().Wait();
+                }
 
                 return 0;
             }
