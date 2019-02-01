@@ -4,34 +4,18 @@ using System.Text;
 
 namespace DomainHunter.BLL
 {
-    /// <summary>
-    /// true randomness, no words, not anything
-    /// </summary>
-    public class DefaultRandomNameGenerator : IRandomNameGenerator
+    public class AlternatedVowelsRandomNameGenerator : IRandomNameGenerator
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
 
-        public DefaultRandomNameGenerator(IRandomNumberGenerator randomNumberGenerator)
+        public AlternatedVowelsRandomNameGenerator(IRandomNumberGenerator randomNumberGenerator)
         {
             _randomNumberGenerator = randomNumberGenerator;
         }
 
         public string GenerateName(int length)
         {
-            var sb = new StringBuilder(GetRandomConsonant());
-            for (int i = 0; i < length; i++)
-            {
-                var charTypeSelector = _randomNumberGenerator.GenerateRandomNumber(1);
-                if (charTypeSelector == 0)
-                {
-                    sb.Append(GetRandomVowel());
-                }
-                else
-                {
-                    sb.Append(GetRandomConsonant());
-                }
-            }
-            return sb.ToString();
+            return $"{GetRandomStarting()}{GetRandomVowel()}{GetRandomVersatile()}{GetRandomConsonant()}{GetRandomVowel()}";
         }
 
         private char GetRandomVowel()
@@ -46,10 +30,21 @@ namespace DomainHunter.BLL
             return GetRandomLetter(letterList);
         }
 
+        private char GetRandomVersatile()
+        {
+            string letterList = "lrn";
+            return GetRandomLetter(letterList);
+        }
+        
+        private char GetRandomStarting()
+        {
+            string letterList = "dpmnvbc";
+            return GetRandomLetter(letterList);
+        }
+
+
         private char GetRandomLetter(string letterList)
             => letterList[_randomNumberGenerator.GenerateRandomNumber(letterList.Length - 1)];
-        
 
-       
     }
 }

@@ -67,11 +67,13 @@ namespace DomainHunter.Console
                     selectorOptions,
                     randomNumberGenerator
                     );
-                IWhoisService whoisService = new DefaultWhoisService(logger, serverSelector);
-                IDomainChecker domainNameChecker = new WhoisDomainChecker(logger, whoisService);
-               
+                IWhoisResponseParser whoisParser = new RegexWhoisResponseParser();
+                IWhoisService whoisService = new DefaultWhoisService(logger, serverSelector, whoisParser);
+                IDomainChecker domainNameChecker = new WhoisDomainChecker(logger, whoisService, whoisParser);
+
                 IRandomNameGenerator randomNameGenerator = new DefaultRandomNameGenerator(randomNumberGenerator);
-                              
+                //IRandomNameGenerator randomNameGenerator = new AlternatedVowelsRandomNameGenerator(randomNumberGenerator);  
+
                 var service = new DomainHunterService(
                     logger,
                     domainNameChecker,
@@ -85,9 +87,7 @@ namespace DomainHunter.Console
                 var concurrentTaskNumber = int.Parse(configuration["ConcurrentTaskNumber"]);
                 StartJobConcurrently(concurrentTaskNumber, service).Wait();
 
-#pragma warning disable CS0162 // Unreachable code detected
                 return 0;
-#pragma warning restore CS0162 // Unreachable code detected
             }
             catch (Exception ex)
             {

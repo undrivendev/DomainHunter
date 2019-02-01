@@ -15,8 +15,7 @@ CREATE TABLE public.domain (
 	tld VARCHAR(10) NOT NULL,
 	status smallint NOT NULL,
 	expiration timestamp,
-	checked timestamp,
-	UNIQUE(name, tld)
+	checked timestamp
 )
 WITH (
     OIDS=FALSE

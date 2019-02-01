@@ -15,11 +15,13 @@ namespace DomainHunter.BLL.Whois
     {
         private readonly ILogger _logger;
         private readonly IServerSelector _serverSelector;
+        private readonly IWhoisResponseParser _whoisResponseParser;
 
-        public DefaultWhoisService(ILogger logger, IServerSelector serverSelector)
+        public DefaultWhoisService(ILogger logger, IServerSelector serverSelector, IWhoisResponseParser whoisResponseParser)
         {
             _logger = logger;
             _serverSelector = serverSelector;
+            _whoisResponseParser = whoisResponseParser;
         }
 
         /// <summary>
@@ -34,7 +36,11 @@ namespace DomainHunter.BLL.Whois
             var result = await GetResponseFromServer(initialServer, domain);
             if (result.Success)
             {
-                var finalServer = ParseForServerName(result.Data);
+                if (_whoisResponseParser.ParseIsNoMatch(result.Data))
+                {
+                    return result;
+                }
+                var finalServer = _whoisResponseParser.ParseRegistrarServerName(result.Data);
                 if (finalServer.ToLowerInvariant() != initialServer.ToLowerInvariant())
                 {
                     result = await GetResponseFromServer(finalServer, domain);
@@ -46,10 +52,6 @@ namespace DomainHunter.BLL.Whois
             }
             return Result.FailedResult<string>(result.Errors.ToArray());
         }
-
-        private string ParseForServerName(string whoisString)
-            => Regex.Match(whoisString, @"(?<=Registrar WHOIS Server: ).+\r").Value.Trim();
-        
 
         private async Task<Result<string>> GetResponseFromServer(string server, Domain domain)
         {
@@ -69,7 +71,7 @@ namespace DomainHunter.BLL.Whois
                     {
 
                         int numBytesRead;
-                        while ((numBytesRead = netStream.Read(responseData, 0, responseData.Length)) > 0)
+                        while ((numBytesRead = await netStream.ReadAsync(responseData, 0, responseData.Length)) > 0)
                         {
                             memStream.Write(responseData, 0, numBytesRead);
                         }
@@ -85,17 +87,14 @@ namespace DomainHunter.BLL.Whois
                 return Result.FailedResult<string>(new Error(ErrorCode.GENERIC_ERROR, ErrorLevel.Error, errorMessage));
             }
 
-            if (IsValidResponse(resultString))
+            if (_whoisResponseParser.IsValidResponse(resultString))
             {
                 return Result.SuccessResult(resultString);
             }
             else
             {
                 return Result.FailedResult<string>(new Error(ErrorCode.GENERIC_ERROR, ErrorLevel.Error, resultString));
-            }           
+            }
         }
-
-        private bool IsValidResponse(string whoisResponse)
-            => whoisResponse.Contains("Registrar WHOIS Server: ");
     }
 }

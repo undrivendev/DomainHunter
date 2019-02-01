@@ -29,20 +29,28 @@ namespace DomainHunter.BLL
 
         public async Task HuntName()
         {
-            var generatedName = _randomNameGenerator.GenerateName(_parameters.Length);
-            var currentDomain = new Domain() { Name = generatedName, Tld = _parameters.Tld };
-            if (!(await _domainRepository.IsChecked(currentDomain)))
+            try
             {
-                var domainData = await _domainChecker.GetStatusAndExpirationDate(currentDomain);
-                currentDomain.Status = domainData.Item1;
-                currentDomain.Expiration = domainData.Item2;
-
-                if (currentDomain.Status == DomainStatus.Free)
+                var generatedName = _randomNameGenerator.GenerateName(_parameters.Length);
+                var currentDomain = new Domain() { Name = generatedName, Tld = _parameters.Tld };
+                if (!(await _domainRepository.IsChecked(currentDomain)))
                 {
-                    _logger.Log($"found free domain {currentDomain}");
+                    var domainData = await _domainChecker.GetStatusAndExpirationDate(currentDomain);
+                    currentDomain.Status = domainData.Item1;
+                    currentDomain.Expiration = domainData.Item2;
+
+                    if (currentDomain.Status == DomainStatus.nowhois)
+                    {
+                        _logger.Log($"found free domain {currentDomain}");
+                    }
+                    currentDomain.Checked = DateTime.UtcNow;
+                    await _domainRepository.Insert(currentDomain);
                 }
-                currentDomain.Checked = DateTime.UtcNow;
-                await _domainRepository.Insert(currentDomain);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(ex);
+                throw;
             }
         }
 
