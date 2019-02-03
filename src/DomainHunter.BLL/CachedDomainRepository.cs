@@ -16,12 +16,13 @@ namespace DomainHunter.BLL
         {
             _decoratedImplementation = decoratedImplementation;
 
-            InitializeCache();
+            InitializeCache().Wait();
         }
 
-        private void InitializeCache()
+        private async Task InitializeCache()
         {
-            _cache = new HashSet<string>((_decoratedImplementation.GetAll().Result).Select(e => e.ToString()));
+            var x = await _decoratedImplementation.GetAll();
+            _cache = new HashSet<string>((await _decoratedImplementation.GetAll()).Select(e => e.ToString()));
         }
 
         public Task<IEnumerable<Domain>> GetAll()

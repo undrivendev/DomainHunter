@@ -1,4 +1,4 @@
-﻿using Mds.Common.Logging;
+﻿using Ladasoft.Common.Logging;
 using System;
 using System.Threading.Tasks;
 

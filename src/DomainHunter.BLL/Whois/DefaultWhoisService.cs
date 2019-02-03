@@ -1,5 +1,5 @@
-﻿using Mds.Common.Base;
-using Mds.Common.Logging;
+﻿using Ladasoft.Common.Base;
+using Ladasoft.Common.Logging;
 using Newtonsoft.Json;
 using System;
 using System.IO;

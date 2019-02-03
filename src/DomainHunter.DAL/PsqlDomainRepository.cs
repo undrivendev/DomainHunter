@@ -2,7 +2,7 @@
 using Dapper.Contrib;
 using Dapper.Contrib.Extensions;
 using DomainHunter.BLL;
-using Mds.Common.Base;
+using Ladasoft.Common.Base;
 using Npgsql;
 using System;
 using System.Collections.Generic;

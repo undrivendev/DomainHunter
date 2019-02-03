@@ -1,5 +1,5 @@
 ﻿using DomainHunter.BLL.Whois;
-using Mds.Common.Logging;
+using Ladasoft.Common.Logging;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;

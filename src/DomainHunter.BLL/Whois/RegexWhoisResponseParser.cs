@@ -25,12 +25,18 @@ namespace DomainHunter.BLL.Whois
 
         public string ParseRegistrarServerName(string input)
         {
-            return new Regex(@"(?<=Registrar WHOIS Server: ).+", RegexOptions.IgnoreCase).Match(input).Value.Trim();
+            return new Regex(@"(?<=WHOIS Server.*:).+", RegexOptions.IgnoreCase).Match(input).Value.Trim();
         }
 
         public DomainStatus GetDomainStatus(string input)
         {
-            throw new NotImplementedException();
+            var allStringStatuses = new Regex(@"(?<=Status.*:).+(?=http)", RegexOptions.IgnoreCase).Matches(input);
+            DomainStatus finalStatus = DomainStatus.nowhois;
+            foreach (var current in allStringStatuses)
+            {
+                finalStatus = finalStatus | (DomainStatus)Enum.Parse(typeof(DomainStatus), current.ToString().Trim());
+            }
+            return finalStatus;
         }
 
       
