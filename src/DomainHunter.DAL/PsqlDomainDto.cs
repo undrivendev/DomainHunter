@@ -10,8 +10,11 @@ namespace DomainHunter.DAL
     {
         public string name { get; set; }
         public string tld { get; set; }
-        public byte status { get; set; }
         public DateTime? expiration { get; set; }
         public DateTime? @checked { get; set; }
+
+        [Write(false)]
+        [Computed]
+        public PsqlDomainStatusDto status { get; set; }
     }
 }

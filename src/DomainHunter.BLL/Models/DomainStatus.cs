@@ -8,6 +8,7 @@ namespace DomainHunter.BLL
     /// check also https://www.icann.org/resources/pages/epp-status-codes-2014-06-16-en
     /// </summary>
     /*
+BY REGISTRY:
 addPeriod
 autoRenewPeriod
 inactive
@@ -26,11 +27,20 @@ serverRenewProhibited
 serverTransferProhibited
 serverUpdateProhibited
 transferPeriod
+
+BY REGISTRAR:
+clientDeleteProhibited
+clientHold
+clientRenewProhibited
+clientTransferProhibited
+clientUpdateProhibited
      */
     public class DomainStatus : BaseModel
     {
+        //BY REGISTRY
         public bool Error    { get; set; }
         public bool NoWhois { get; set; }
+        public bool RegistrarLock { get; set; }
         public bool Ok { get; set; }
         public bool ServerHold { get; set; }
         public bool RedemptionPeriod { get; set; }
@@ -49,5 +59,12 @@ transferPeriod
         public bool ServerTransferProhibited { get; set; }
         public bool ServerUpdateProhibited { get; set; }
         public bool TransferPeriod { get; set; }
+
+        //BY REGISTRAR
+        public bool ClientDeleteProhibited { get; set; }
+        public bool ClientHold { get; set; }
+        public bool ClientRenewProhibited { get; set; }
+        public bool ClientTransferProhibited { get; set; }
+        public bool ClientUpdateProhibited { get; set; }
     }
 }

@@ -33,17 +33,17 @@ namespace DomainHunter.BLL
                 return ExtractDataFromWhoisResponse(whoisResult.Data);
             }
 
-            return (DomainStatus.error, null);
+            return (new DomainStatus() { Error = true }, null);
         }
 
         private (DomainStatus, DateTime?) ExtractDataFromWhoisResponse(string whoisResponse)
         {
             DateTime? expirationDate = null;
-            var status = DomainStatus.error;
+            var status = new DomainStatus();
 
             if (_whoisResponseParser.ParseIsNoMatch(whoisResponse)) //free
             {
-                status = DomainStatus.nowhois;
+                status.NoWhois = true;
             }
             else //taken
             {

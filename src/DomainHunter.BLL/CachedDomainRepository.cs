@@ -21,7 +21,6 @@ namespace DomainHunter.BLL
 
         private async Task InitializeCache()
         {
-            var x = await _decoratedImplementation.GetAll();
             _cache = new HashSet<string>((await _decoratedImplementation.GetAll()).Select(e => e.ToString()));
         }
 

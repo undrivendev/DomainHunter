@@ -39,7 +39,7 @@ namespace DomainHunter.BLL
                     currentDomain.Status = domainData.Item1;
                     currentDomain.Expiration = domainData.Item2;
 
-                    if (currentDomain.Status == DomainStatus.nowhois)
+                    if (currentDomain.Status.NoWhois)
                     {
                         _logger.Log($"found free domain {currentDomain}");
                     }

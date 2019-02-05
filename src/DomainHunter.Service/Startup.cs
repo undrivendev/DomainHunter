@@ -104,8 +104,8 @@ namespace DomainHunter.Service
             _container.Register<IMapper>(() => new AutomapperWrapper(AutoMapper.Mapper.Instance), Lifestyle.Singleton);
             _container.Register<PsqlParameters>(() => new PsqlParameters(_configuration.GetConnectionString("Main")), Lifestyle.Singleton);
 
-            _container.Register<IDomainRepository, PsqlDomainRepository>();
-            _container.RegisterDecorator<IDomainRepository, CachedDomainRepository>();
+            _container.Register<IDomainRepository, PsqlDomainRepository>(Lifestyle.Singleton);
+            _container.RegisterDecorator<IDomainRepository, CachedDomainRepository>(Lifestyle.Singleton);
             _container.Register<DomainHunterParameters>(() => new DomainHunterParameters()
             {
                 Length = int.Parse(_configuration["DomainLength"]),
@@ -139,7 +139,13 @@ namespace DomainHunter.Service
             logger.Log("Starting the hunt...");
 
             var service = _container.GetInstance<DomainHunterService>();
-            Task.Run(() => service.HuntName());
+            Task.Run(() => 
+            {
+                while (true)
+                {
+                    service.HuntName().Wait();
+                }
+            });
 
             //var concurrentTaskNumber = int.Parse(configuration["ConcurrentTaskNumber"]);
             //StartJobConcurrently(concurrentTaskNumber, service).Wait();

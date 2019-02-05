@@ -1,13 +1,10 @@
 ﻿using Dapper;
-using Dapper.Contrib;
 using Dapper.Contrib.Extensions;
 using DomainHunter.BLL;
 using Ladasoft.Common.Base;
 using Npgsql;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DomainHunter.DAL
@@ -27,15 +24,27 @@ namespace DomainHunter.DAL
         {
             using (var conn = new NpgsqlConnection(_psqlParameters.ConnectionString))
             {
-                return (await conn.GetAllAsync<PsqlDomainDto>()).Select(_mapper.Map<PsqlDomainDto, Domain>);
+                var sql = @"SELECT * FROM domain d INNER JOIN domainstatus ds ON d.id = ds.domainid";
+                return (await conn.QueryAsync<PsqlDomainDto, PsqlDomainStatusDto, PsqlDomainDto>(sql,
+                    (domain, status) => 
+                    {
+                        domain.status = status;
+                        return domain;
+                    }))
+                    .Select(_mapper.Map<PsqlDomainDto, Domain>)
+                    .ToList();
             }
         }
 
         public async Task<int> Insert(Domain domain)
         {
+            var dto = _mapper.Map<Domain, PsqlDomainDto>(domain);
             using (var conn = new NpgsqlConnection(_psqlParameters.ConnectionString))
             {
-                return await conn.InsertAsync(_mapper.Map<Domain, PsqlDomainDto>(domain));
+                var id = await conn.InsertAsync(dto);
+                dto.status.domainid = id;
+                await conn.InsertAsync(dto.status);
+                return id;
             }
         }
 
