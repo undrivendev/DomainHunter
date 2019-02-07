@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DomainHunter.BLL\Ladasoft.DomainHunter.BLL.csproj" />
-    <ProjectReference Include="..\DomainHunter.DAL\Ladasoft.DomainHunter.DAL.csproj" />
+    <ProjectReference Include="..\Ladasoft.DomainHunter.BLL\Ladasoft.DomainHunter.BLL.csproj" />
+    <ProjectReference Include="..\Ladasoft.DomainHunter.DAL\Ladasoft.DomainHunter.DAL.csproj" />
   </ItemGroup>
 
 </Project>
