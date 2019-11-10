@@ -139,16 +139,20 @@ namespace DomainHunter.Service
             logger.Log("Starting the hunt...");
 
             var service = _container.GetInstance<DomainHunterService>();
-            Task.Run(() => 
+            Task.Run(async () => 
             {
+                var tasks = new List<Task>();
+                for (int i = 0; i < int.Parse(_configuration["ConcurrentTaskNumber"]); i++)
+                {
+                    tasks.Add(service.HuntName());
+                }
                 while (true)
                 {
-                    service.HuntName().Wait();
+                    var task = await Task.WhenAny(tasks);
+                    tasks.Remove(task);
+                    tasks.Add(service.HuntName());
                 }
             });
-
-            //var concurrentTaskNumber = int.Parse(configuration["ConcurrentTaskNumber"]);
-            //StartJobConcurrently(concurrentTaskNumber, service).Wait();
         }
     }
 }
