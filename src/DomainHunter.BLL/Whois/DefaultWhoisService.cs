@@ -1,6 +1,4 @@
-﻿using Ladasoft.Common.Base;
-using Ladasoft.Common.Logging;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
@@ -8,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DomainHunter.BLL.Common;
 
 namespace DomainHunter.BLL.Whois
 {

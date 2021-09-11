@@ -1,11 +1,8 @@
-﻿using Ladasoft.Common.Base;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace DomainHunter.Service
 {
-    public class AutomapperWrapper : IMapper
+    public class AutomapperWrapper : BLL.Common.IMapper
     {
         private readonly AutoMapper.IMapper _mapper;
 

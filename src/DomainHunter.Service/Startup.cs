@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DomainHunter.BLL;
+using DomainHunter.BLL.Common;
 using DomainHunter.BLL.Whois;
 using DomainHunter.DAL;
-using Ladasoft.Common.Base;
-using Ladasoft.Common.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -37,7 +36,7 @@ namespace DomainHunter.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
 
             IntegrateSimpleInjector(services);
         }

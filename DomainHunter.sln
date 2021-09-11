@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ladasoft.DomainHunter.BLL", "src\Ladasoft.DomainHunter.BLL\Ladasoft.DomainHunter.BLL.csproj", "{AA76EA91-E78D-4B6D-8AE4-C99317E13FFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainHunter.BLL", "src\DomainHunter.BLL\DomainHunter.BLL.csproj", "{AA76EA91-E78D-4B6D-8AE4-C99317E13FFA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ladasoft.DomainHunter.DAL", "src\Ladasoft.DomainHunter.DAL\Ladasoft.DomainHunter.DAL.csproj", "{2A82FD0F-DAD7-49DB-91D5-C7548C9AD2B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainHunter.DAL", "src\DomainHunter.DAL\DomainHunter.DAL.csproj", "{2A82FD0F-DAD7-49DB-91D5-C7548C9AD2B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ladasoft.DomainHunter.Service", "src\Ladasoft.DomainHunter.Service\Ladasoft.DomainHunter.Service.csproj", "{FE84D270-E23A-4351-A482-D6EC3A14047E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainHunter.Service", "src\DomainHunter.Service\DomainHunter.Service.csproj", "{FE84D270-E23A-4351-A482-D6EC3A14047E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

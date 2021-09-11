@@ -1,11 +1,11 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
 using DomainHunter.BLL;
-using Ladasoft.Common.Base;
 using Npgsql;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DomainHunter.BLL.Common;
 
 namespace DomainHunter.DAL
 {

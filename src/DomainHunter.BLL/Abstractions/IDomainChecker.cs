@@ -1,5 +1,4 @@
-﻿using Ladasoft.Common.Base;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace DomainHunter.BLL

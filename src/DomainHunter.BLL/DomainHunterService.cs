@@ -1,6 +1,6 @@
-﻿using Ladasoft.Common.Logging;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using DomainHunter.BLL.Common;
 
 namespace DomainHunter.BLL
 {

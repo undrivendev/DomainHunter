@@ -1,8 +1,8 @@
-﻿using Ladasoft.Common.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using DomainHunter.BLL.Common;
 
 namespace DomainHunter.BLL.Whois
 {

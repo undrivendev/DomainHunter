@@ -1,4 +1,4 @@
-﻿using Ladasoft.Common.Logging;
+﻿using DomainHunter.BLL.Common;
 
 namespace DomainHunter.Service
 {
